@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`TaskList.vue renders correct contents 1`] = `
-<div class="task-list">
-    <h2>Task List</h2> <input type="text" placeholder="Type new task!">
-    <ul></ul>
-</div>
-`;

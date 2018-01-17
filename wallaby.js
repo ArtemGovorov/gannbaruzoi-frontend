@@ -1,8 +1,10 @@
+// Add `jest-vue-preprocessor` to your dev dependencies
+
 module.exports = function (wallaby) {
   return {
-    files: ['src/**/*', '!src/**/__tests__/**/*', 'package.json'],
+    files: ['src/**/*', 'package.json'],
 
-    tests: ['src/**/__tests__/*-test.js'],
+    tests: ['test/**/*.spec.js'],
 
     env: {
       type: 'node',
@@ -14,15 +16,19 @@ module.exports = function (wallaby) {
       '**/*.vue': require('wallaby-vue-compiler')(wallaby.compilers.babel({}))
     },
 
+    preprocessors: {
+      '**/*.vue': file => require('jest-vue-preprocessor').process(file.content, file.path)
+    },
+
     setup: function (wallaby) {
-      var jestConfig = require('./package.json').jest
-      if (!jestConfig.globals) {
-        jestConfig.globals = {}
-      }
+      const jestConfig = require('./package.json').jest || {}
+
       jestConfig.moduleNameMapper = {
+        '^@/components/([^\\.]*)$': wallaby.projectCacheDir + '/src/components/$1.vue',
         '^@/(.*)$': wallaby.projectCacheDir + '/src/$1'
       }
-      jestConfig.globals['__DEV__'] = true
+      delete jestConfig.transform['\\.vue$']
+
       wallaby.testFramework.configure(jestConfig)
     },
 
